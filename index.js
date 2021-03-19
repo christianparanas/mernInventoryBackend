@@ -4,7 +4,7 @@ const app = express()
 const db = require('./config/db.js')
 const cors = require('cors')
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // needed to fix some errors
 app.use(cors())
