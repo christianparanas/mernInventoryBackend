@@ -52,13 +52,9 @@ app.post("/login", async (req, res) => {
 		 		if(password == rows[0].password) {
 
 			 		res.status(200).json({
-			 			status: "success",
-			 			message: "User Successfully Logged in!",
-			 			data: {
 			 				id: rows[0].id,
 			 				name: rows[0].name,
 			 				email: rows[0].email,
-			 			}
 			 		})
 			 	} else {
 			 		res.status(400).json({
