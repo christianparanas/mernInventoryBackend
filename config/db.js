@@ -1,10 +1,10 @@
 const mysql = require('mysql')
 
 const db = mysql.createConnection({
-	host: 'sql5.freemysqlhosting.net',
-	user: 'sql5400010',
-	password: 'G2LmlUw2kF',
-	database: 'sql5400010'
+	host: 'freedb.tech',
+	user: 'freedbtech_christian',
+	password: 'christian',
+	database: 'freedbtech_Ecommerce'
 })
 
 module.exports = db
