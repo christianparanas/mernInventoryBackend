@@ -23,16 +23,28 @@ app.use(express.urlencoded({ extended: true }))
 app.post("/register", async (req, res) => {
 	const creden = req.body;
 	console.log(creden)
-	
-	// insert into the database
-	db.query("INSERT INTO customer (name, email, password ) VALUES (?, ?, ?)",
-		[creden.name, creden.email, creden.password],
-		(err, result) => {
-			console.log(err)
-		}
-	);
 
-	res.send({ status: 200 })
+	db.query("SELECT * FROM customer WHERE email = ?", creden.email,
+		// check if email already used by other users
+		async (err, rows) => {
+			if(rows.length <= 0) {
+				// insert into the database
+				db.query("INSERT INTO customer (name, email, password ) VALUES (?, ?, ?)",
+					[creden.name, creden.email, creden.password],
+					(err, result) => {
+						console.log(err)
+					}
+				);
+				res.send({ status: 200 })
+
+			} else {
+				res.status(400).json({
+			 			message: "Email already exist!"
+			 		})
+			}
+		}
+	)
+	
 })
 
 app.post("/login", async (req, res) => {
