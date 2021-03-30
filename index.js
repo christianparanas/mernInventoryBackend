@@ -62,8 +62,16 @@ app.post("/login", async (req, res) => {
 
 		 	if(rows.length > 0) {
 		 		if(password == rows[0].password) {
+		 			let userId = rows[0].id
+
+		 			// generate token
+		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
+		 				expiresIn: 300,
+		 			})
 
 			 		res.status(200).json({
+			 				auth: true,
+			 				token: token,
 			 				id: rows[0].id,
 			 				name: rows[0].name,
 			 				email: rows[0].email,
