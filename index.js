@@ -66,15 +66,17 @@ app.post("/login", async (req, res) => {
 
 		 			// generate token
 		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
-		 				expiresIn: 300,
+		 				expiresIn: 600,
 		 			})
 
 			 		res.status(200).json({
 			 				auth: true,
 			 				token: token,
-			 				id: rows[0].id,
-			 				name: rows[0].name,
-			 				email: rows[0].email,
+			 				result: {
+			 					id: rows[0].id,
+				 				name: rows[0].name,
+				 				email: rows[0].email,
+			 				}
 			 		})
 			 	} else {
 			 		res.status(400).json({
@@ -90,58 +92,3 @@ app.post("/login", async (req, res) => {
 	)
 	
 })
-
-
-
-
-// // check if user exist
-// 	const userExist = await User.findOne({email: req.body.email })
-// 	if(!userExist) return res.status(400).send("User doesn't exist")
-
-// 	// valid password
-// 	const validPassword = await bcrypt.compare(req.body.password, userExist.password)
-// 	if(!validPassword) return res.status(400).send("Invalid Password!")
-
-// 	// create and assign token
-// 	const token = jwt.sign({ _id: userExist._id, email: userExist.email }, process.env.TOKEN_SECRET, {
-// 		expiresIn: "10h"
-// 	})
-
-// 	// send response if the validation was success
-// 	res.header('auth-token', token)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// MYSQL
-// app.get("/", (req, res) => {
-// 	res.send("hello")
-// })
-
-// app.post("/api/register", (req, res) => {
-// 	const creden = req.body;
-// 	console.log(creden)
-	
-// 	// insert into the database
-// 	db.query("INSERT INTO users (name, email, password ) VALUES (?, ?, ?)",
-// 		[creden.name, creden.email, creden.password],
-// 		(err, result) => {
-// 			console.log(err)
-// 		}
-// 	);
-
-// })
-
