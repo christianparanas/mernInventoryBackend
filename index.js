@@ -92,3 +92,49 @@ app.post("/login", async (req, res) => {
 	)
 	
 })
+
+// admin auth
+app.post("/adminlogin", async (req, res) => {
+	let { username, password } = req.body;
+	console.log(req.body)
+
+	db.query(
+		 "SELECT * FROM admin WHERE username = ?", username,
+
+		 // check if password is valid
+		 async (err, rows) => {
+
+		 	if(rows.length > 0) {
+		 		if(password == rows[0].password) {
+		 			let userId = rows[0].id
+
+		 			// generate token
+		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
+		 				expiresIn: 600,
+		 			})
+
+			 		res.status(200).json({
+			 				auth: true,
+			 				token: token,
+			 				result: {
+			 					id: rows[0].id,
+				 				name: rows[0].name,
+				 				username: rows[0].username,
+				 				email: rows[0].email,
+			 				}
+			 		})
+			 	} else {
+			 		res.status(400).json({
+			 			message: "Password is Incorrect!"
+			 		})
+			 	}
+		 	} else {
+		 		res.status(400).json({
+			 		message: "User didn't exist!"
+			 	})
+		 	}
+		 }
+	)
+	
+})
+
