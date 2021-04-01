@@ -138,3 +138,44 @@ app.post("/adminlogin", async (req, res) => {
 	
 })
 
+
+// add new prodct route
+app.post("/newproduct", async (req, res) => {
+	const product = req.body;
+
+	db.query("INSERT INTO products (product_name, product_image, product_price, product_quantity ) VALUES (?, ?, ?, ?)",
+		[product.name, product.image, product.price, product.quantity],
+		
+		 (err, result) => {
+			if(!err) {
+				res.status(200).json({
+			 		message: "Product saved!"
+			 	})
+			} else {
+				res.status(400).json({
+					message: "Error!"
+				})
+			}
+		}
+	);
+	
+})
+
+
+// retrieve all products data to admin panel
+app.get("/adminproducts", async (req, res) => {
+
+	db.query("SELECT * FROM products", (err, result) => {
+			if(err) {
+				res.status(400).json({
+					message: "Error!"
+				})
+			} else {
+				res.status(200).json({
+					result
+				})
+			}
+		}
+	);
+})
+
