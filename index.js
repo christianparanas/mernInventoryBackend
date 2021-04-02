@@ -165,17 +165,24 @@ app.post("/newproduct", async (req, res) => {
 // retrieve all products data to admin panel
 app.get("/adminproducts", async (req, res) => {
 
-	db.query("SELECT * FROM products", (err, result) => {
-			if(err) {
-				res.status(400).json({
-					message: "Error!"
-				})
-			} else {
+	db.query("SELECT * FROM products ORDER BY product_id DESC", 
+		(err, result) => {
+			// check if db has items
+			if(result.length > 0) {
 				res.status(200).json({
 					result
+				})
+			} else {
+				res.status(401).json({
+					message: "No Items in DB"
+				})
+			}
+
+			if(err) {
+				res.status(400).json({
+					message: "Something went wrong!"
 				})
 			}
 		}
 	);
 })
-
