@@ -68,7 +68,7 @@ app.post("/login", async (req, res) => {
 
 		 			// generate token
 		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
-		 				expiresIn: 600,
+		 				expiresIn: 1200,
 		 			})
 
 			 		res.status(200).json({
@@ -115,7 +115,7 @@ app.post("/adminlogin", async (req, res) => {
 
 		 			// generate token
 		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
-		 				expiresIn: 600,
+		 				expiresIn: 1200,
 		 			})
 
 			 		res.status(200).json({
@@ -178,7 +178,7 @@ app.post("/delproduct", async (req, res) => {
 			 	})
 			} else {
 				res.status(400).json({
-					message: "Deletion Error!"
+					message: "Server cannot be reached!"
 				})
 			}
 		}
@@ -198,14 +198,14 @@ app.get("/adminproducts", async (req, res) => {
 					result
 				})
 			} else {
-				res.status(401).json({
+				res.status(202).json({
 					message: "No Items in DB"
 				})
 			}
 
 			if(err) {
-				res.status(400).json({
-					message: "Something went wrong!"
+				res.status(404).json({
+					message: "Server cannot be reached!"
 				})
 			}
 		}
