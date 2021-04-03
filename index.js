@@ -20,6 +20,8 @@ app.use(express.urlencoded({ extended: true }))
 
 
 
+// customer ==============================
+
 app.post("/register", async (req, res) => {
 	const creden = req.body;
 	console.log(creden)
@@ -93,6 +95,9 @@ app.post("/login", async (req, res) => {
 	
 })
 
+
+// admin =================================================
+
 // admin auth
 app.post("/adminlogin", async (req, res) => {
 	let { username, password } = req.body;
@@ -154,6 +159,26 @@ app.post("/newproduct", async (req, res) => {
 			} else {
 				res.status(400).json({
 					message: "Error!"
+				})
+			}
+		}
+	);
+	
+})
+
+app.post("/delproduct", async (req, res) => {
+	const product = req.body;
+
+	db.query("DELETE FROM products WHERE product_id = ?", product.id,
+		
+		 (err, result) => {
+			if(!err) {
+				res.status(200).json({
+			 		message: "Item successfully deleted!"
+			 	})
+			} else {
+				res.status(400).json({
+					message: "Deletion Error!"
 				})
 			}
 		}
