@@ -40,7 +40,7 @@ app.post("/register", async (req, res) => {
 				res.send({ status: 200 })
 
 			} else {
-				res.status(400).json({
+				res.status(202).json({
 			 			message: "Email already exist!"
 			 		})
 			}
@@ -81,12 +81,12 @@ app.post("/login", async (req, res) => {
 			 				}
 			 		})
 			 	} else {
-			 		res.status(400).json({
+			 		res.status(202).json({
 			 			message: "Password is Incorrect!"
 			 		})
 			 	}
 		 	} else {
-		 		res.status(400).json({
+		 		res.status(204).json({
 			 		message: "User didn't exist!"
 			 	})
 		 	}
@@ -129,12 +129,12 @@ app.post("/adminlogin", async (req, res) => {
 			 				}
 			 		})
 			 	} else {
-			 		res.status(400).json({
+			 		res.status(202).json({
 			 			message: "Password is Incorrect!"
 			 		})
 			 	}
 		 	} else {
-		 		res.status(400).json({
+		 		res.status(204).json({
 			 		message: "User didn't exist!"
 			 	})
 		 	}
@@ -172,6 +172,27 @@ app.post("/delproduct", async (req, res) => {
 	db.query("DELETE FROM products WHERE product_id = ?", product.id,
 		
 		 (err, result) => {
+			if(!err) {
+				res.status(200).json({
+			 		message: "Item successfully deleted!"
+			 	})
+			} else {
+				res.status(400).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
+})
+
+app.post("/updateproduct", async (req, res) => {
+	const {id, name, price, quantity} = req.body;
+
+	db.query("UPDATE products SET product_name = ?, product_price = ?, product_quantity = ? WHERE product_id = ?", 
+		[name, price, quantity, id],
+		
+		 (err) => {
 			if(!err) {
 				res.status(200).json({
 			 		message: "Item successfully deleted!"
