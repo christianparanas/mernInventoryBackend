@@ -232,3 +232,57 @@ app.get("/adminproducts", async (req, res) => {
 		}
 	);
 })
+
+// overview dashboard
+app.get("/adminoverview", async (req, res) => {
+
+	// get product count
+	db.query("SELECT * FROM products",
+	
+		 (err, product_result) => {
+			if(!err) {
+				// get customer count
+				db.query("SELECT * FROM customer",
+					
+					 (err, customer_result) => {
+						if(!err) {
+							res.status(200).json({
+						 		productCount: product_result.length,
+						 		customerCount: customer_result.length
+						 	})
+						}
+			 	})
+			} else {
+				res.status(400).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
+})
+
+// admin customer list
+app.get("/admincustomers", async (req, res) => {
+	
+	db.query("SELECT id, name, email, created_at FROM customer", 
+		(err, result) => {
+			// check if db has items
+			if(result.length > 0) {
+				res.status(200).json({
+					result
+				})
+			} else {
+				res.status(202).json({
+					message: "No Customers registered"
+				})
+			}
+
+			if(err) {
+				res.status(404).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+})
