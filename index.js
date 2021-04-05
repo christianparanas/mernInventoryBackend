@@ -68,7 +68,7 @@ app.post("/login", async (req, res) => {
 
 		 			// generate token
 		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
-		 				expiresIn: 1200,
+		 				expiresIn: "1h",
 		 			})
 
 			 		res.status(200).json({
@@ -115,7 +115,7 @@ app.post("/adminlogin", async (req, res) => {
 
 		 			// generate token
 		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
-		 				expiresIn: 1200,
+		 				expiresIn: "1h",
 		 			})
 
 			 		res.status(200).json({
@@ -285,4 +285,33 @@ app.get("/admincustomers", async (req, res) => {
 			}
 		}
 	);
+})
+
+
+// get specifiv customer details
+app.post("/specificcustomer", async (req, res) => {
+	const id = req.body.id;
+	console.log(id)
+
+	db.query("SELECT id, name, email, created_at FROM customer WHERE id = ?", id,
+		
+		 (err, result) => {
+			if(result.length > 0) {
+				res.status(200).json({
+					result
+				})
+			} else {
+				res.status(202).json({
+					message: "No Customers registered"
+				})
+			}
+
+			if(err) {
+				res.status(404).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
 })
