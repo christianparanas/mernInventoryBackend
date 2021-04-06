@@ -315,3 +315,64 @@ app.post("/specificcustomer", async (req, res) => {
 	);
 	
 })
+
+
+
+// user end - get specifi product
+
+app.post("/specificproduct", async (req, res) => {
+	const id = req.body.id;
+
+	db.query("SELECT * FROM products WHERE product_id = ?", id,
+		
+		 (err, result) => {
+			if(result.length > 0) {
+				res.status(200).json({
+					result
+				})
+			} else {
+				res.status(202).json({
+					message: "No Customers registered"
+				})
+			}
+
+			if(err) {
+				res.status(404).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
+})
+
+
+// get home 4 products
+app.get("/homefourproducts", async (req, res) => {
+	
+	db.query("SELECT * FROM products LIMIT 4", 
+		(err, resultone) => {
+			// check if db has items
+			if(resultone.length > 0) {
+				db.query("SELECT * FROM products", 
+					(err, resulttwo) => {
+						res.status(200).json({
+							resultfour: resultone,
+							resultlength: resulttwo.length
+						})
+					})
+			} else {
+				res.status(202).json({
+					message: "No Product"
+				})
+			}
+
+			if(err) {
+				res.status(404).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+})
+
