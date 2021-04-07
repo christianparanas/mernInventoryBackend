@@ -354,7 +354,7 @@ app.get("/homefourproducts", async (req, res) => {
 		(err, resultone) => {
 			// check if db has items
 			if(resultone.length > 0) {
-				db.query("SELECT * FROM products", 
+				db.query("SELECT * FROM products ORDER BY product_id DESC", 
 					(err, resulttwo) => {
 						res.status(200).json({
 							resultfour: resultone,
