@@ -350,11 +350,11 @@ app.post("/specificproduct", async (req, res) => {
 // get home 4 products
 app.get("/homefourproducts", async (req, res) => {
 	
-	db.query("SELECT * FROM products LIMIT 4", 
+	db.query("SELECT * FROM products ORDER BY product_id DESC LIMIT 4", 
 		(err, resultone) => {
 			// check if db has items
 			if(resultone.length > 0) {
-				db.query("SELECT * FROM products ORDER BY product_id DESC", 
+				db.query("SELECT * FROM products", 
 					(err, resulttwo) => {
 						res.status(200).json({
 							resultfour: resultone,
