@@ -376,3 +376,56 @@ app.get("/homefourproducts", async (req, res) => {
 	);
 })
 
+
+
+// add to cart
+app.post("/addtocart", async (req, res) => {
+	const { qty, item_id, customer_id } = req.body
+
+	console.log(req.body)
+})
+
+// customer cart
+app.post("/cart", async (req, res) => {
+	const id = req.body.id;
+
+	db.query(`
+			SELECT 
+				customers_cart.id AS cart_id, 
+		    products.product_name AS cart_p_name,
+		    products.product_image AS cart_p_image,
+		    products.product_price AS cart_p_price,
+		    products.product_quantity AS cart_p_stock,
+		    customers_cart.qty AS cart_qty,
+		    customer.name AS customer_name,
+		    customers_cart.updated_at AS date_added
+			    
+			FROM customer
+			INNER JOIN customers_cart
+				ON customer.id = customers_cart.customer_id
+			INNER JOIN products
+				ON products.product_id = customers_cart.product_id
+			WHERE customer.id = ${id}`,
+		
+		 (err, result) => {
+			if(result.length > 0) {
+				res.status(200).json({
+					result
+				})
+			} else {
+				res.status(202).json({
+					message: "Empty Cart"
+				})
+			}
+
+			if(err) {
+				res.status(404).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
+})
+
+
