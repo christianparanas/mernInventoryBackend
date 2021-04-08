@@ -379,11 +379,38 @@ app.get("/homefourproducts", async (req, res) => {
 
 
 // add to cart
-app.post("/addtocart", async (req, res) => {
+app.post("/addtocart", (req, res) => {
 	const { qty, item_id, customer_id } = req.body
 
-	console.log(req.body)
+	// check if product is already in the cart or not
+	db.query(`SELECT * FROM customers_cart WHERE product_id = ${item_id} AND customer_id = ${customer_id}`,
+		(err, result) => {
+			if(result.length > 0) {
+				res.status(204).json({
+					msg: "Item already in cart"
+				})
+			} else {
+				db.query("INSERT INTO customers_cart (qty, product_id, customer_id ) VALUES (?, ?, ?)",
+					[qty, item_id, customer_id],
+					
+					 (err, result) => {
+						if(!err) {
+							res.status(200).json({
+						 		message: "Item added to cart!"
+						 	})
+						} else {
+							res.status(202).json({
+								message: "Error!"
+							})
+						}
+					}
+				);
+			}
+		}
+	)
 })
+
+
 
 // customer cart
 app.post("/cart", async (req, res) => {
@@ -405,7 +432,8 @@ app.post("/cart", async (req, res) => {
 				ON customer.id = customers_cart.customer_id
 			INNER JOIN products
 				ON products.product_id = customers_cart.product_id
-			WHERE customer.id = ${id}`,
+			WHERE customer.id = ${id} 
+			ORDER BY customers_cart.created_at DESC`,
 		
 		 (err, result) => {
 			if(result.length > 0) {
