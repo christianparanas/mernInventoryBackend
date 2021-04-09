@@ -454,3 +454,65 @@ app.post("/cart", async (req, res) => {
 })
 
 
+// increase decrease item cart qty
+app.post("/updatecartqty", async (req, res) => {
+	const {id, order} = req.body;
+
+	// check if what condi, inc or dec
+	if(order == "add") {
+		db.query("UPDATE customers_cart SET qty = qty + 1 WHERE id = ?", 
+			[id],
+			 (err) => {
+				if(!err) {
+					res.status(200).json({
+				 		message: "Item qty increased!"
+				 	})
+				} else {
+					res.status(400).json({
+						message: "Server cannot be reached!"
+					})
+				}
+			}
+		);
+
+	} else {
+		db.query("UPDATE customers_cart SET qty = qty - 1 WHERE id = ?", 
+			[id],
+			
+			 (err) => {
+				if(!err) {
+					res.status(200).json({
+				 		message: "Item qty decreased!"
+				 	})
+				} else {
+					res.status(400).json({
+						message: "Server cannot be reached!"
+					})
+				}
+			}
+		);
+	}
+})
+
+
+
+// delete item in the customers_cart if the cart qty equals to zero
+app.post("/delcartitem", async (req, res) => {
+	const cart = req.body;
+
+	db.query("DELETE FROM customers_cart WHERE id = ?", cart.id,
+		
+		 (err, result) => {
+			if(!err) {
+				res.status(200).json({
+			 		message: "Item successfully deleted!"
+			 	})
+			} else {
+				res.status(400).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
+})
