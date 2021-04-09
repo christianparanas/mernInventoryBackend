@@ -24,15 +24,14 @@ app.use(express.urlencoded({ extended: true }))
 
 app.post("/register", async (req, res) => {
 	const creden = req.body;
-	console.log(creden)
 
 	db.query("SELECT * FROM customer WHERE email = ?", creden.email,
 		// check if email already used by other users
 		async (err, rows) => {
 			if(rows.length <= 0) {
 				// insert into the database
-				db.query("INSERT INTO customer (name, email, password ) VALUES (?, ?, ?)",
-					[creden.name, creden.email, creden.password],
+				db.query("INSERT INTO customer (name, email, password, address) VALUES (?, ?, ?, ?)",
+					[creden.name, creden.email, creden.password, creden.address],
 					(err, result) => {
 						console.log(err)
 					}
@@ -51,7 +50,6 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
 	let { email, password } = req.body;
-	console.log(req.body)
 
 	// in case user enter uppercase email
 	email = email.toLowerCase()
@@ -78,6 +76,7 @@ app.post("/login", async (req, res) => {
 			 					id: rows[0].id,
 				 				name: rows[0].name,
 				 				email: rows[0].email,
+				 				address: rows[0].address
 			 				}
 			 		})
 			 	} else {
@@ -101,7 +100,6 @@ app.post("/login", async (req, res) => {
 // admin auth
 app.post("/adminlogin", async (req, res) => {
 	let { username, password } = req.body;
-	console.log(req.body)
 
 	db.query(
 		 "SELECT * FROM admin WHERE username = ?", username,
@@ -291,7 +289,6 @@ app.get("/admincustomers", async (req, res) => {
 // get specifiv customer details
 app.post("/specificcustomer", async (req, res) => {
 	const id = req.body.id;
-	console.log(id)
 
 	db.query("SELECT id, name, email, created_at FROM customer WHERE id = ?", id,
 		
