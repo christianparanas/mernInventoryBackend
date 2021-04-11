@@ -422,7 +422,10 @@ app.post("/cart", async (req, res) => {
 		    products.product_quantity AS cart_p_stock,
 		    customers_cart.qty AS cart_qty,
 		    customer.name AS customer_name,
-		    customers_cart.updated_at AS date_added
+		    customers_cart.updated_at AS date_added,
+		    customers_cart.customer_id AS customerId,
+		    customers_cart.product_id As productId,
+		    address
 			    
 			FROM customer
 			INNER JOIN customers_cart
