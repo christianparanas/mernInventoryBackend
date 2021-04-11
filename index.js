@@ -290,7 +290,7 @@ app.get("/admincustomers", async (req, res) => {
 app.post("/specificcustomer", async (req, res) => {
 	const id = req.body.id;
 
-	db.query("SELECT id, name, email, created_at FROM customer WHERE id = ?", id,
+	db.query("SELECT id, name, email, created_at, address FROM customer WHERE id = ?", id,
 		
 		 (err, result) => {
 			if(result.length > 0) {
