@@ -435,7 +435,7 @@ app.post("/cart", async (req, res) => {
 		 (err, result) => {
 			if(result.length > 0) {
 				res.status(200).json({
-					result
+					result: result
 				})
 			} else {
 				res.status(202).json({
