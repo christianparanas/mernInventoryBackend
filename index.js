@@ -519,3 +519,30 @@ app.post("/delcartitem", async (req, res) => {
 	);
 	
 })
+
+
+// search product
+app.post("/searchitem", async (req, res) => {
+	const searchQuery = req.body;
+
+	db.query(`SELECT * FROM products WHERE product_name LIKE '%${req.body.query}%'`,
+		 (err, result) => {
+			if(!err) {
+				if(result.length > 0) {
+						res.status(200).json({
+					 		result
+					 	})
+					} else {
+						res.status(202).json({
+					 		result: "No item found"
+					 	})
+					}
+			} else {
+				res.status(400).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+	
+})
