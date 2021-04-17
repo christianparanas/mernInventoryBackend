@@ -146,8 +146,8 @@ app.post("/adminlogin", async (req, res) => {
 app.post("/newproduct", async (req, res) => {
 	const product = req.body;
 
-	db.query("INSERT INTO products (product_name, product_image, product_price, product_quantity ) VALUES (?, ?, ?, ?)",
-		[product.name, product.image, product.price, product.quantity],
+	db.query("INSERT INTO products (product_name, product_image, product_description, product_price, product_quantity ) VALUES (?, ?, ?, ?, ?)",
+		[product.name, product.image, product.description, product.price, product.quantity],
 		
 		 (err, result) => {
 			if(!err) {
@@ -185,10 +185,10 @@ app.post("/delproduct", async (req, res) => {
 })
 
 app.post("/updateproduct", async (req, res) => {
-	const {id, name, price, quantity} = req.body;
+	const {id, name, description, price, quantity} = req.body;
 
-	db.query("UPDATE products SET product_name = ?, product_price = ?, product_quantity = ? WHERE product_id = ?", 
-		[name, price, quantity, id],
+	db.query("UPDATE products SET product_name = ?, product_description = ?, product_price = ?, product_quantity = ? WHERE product_id = ?", 
+		[name, description, price, quantity, id],
 		
 		 (err) => {
 			if(!err) {
@@ -418,6 +418,7 @@ app.post("/cart", async (req, res) => {
 				customers_cart.id AS cart_id, 
 		    products.product_name AS cart_p_name,
 		    products.product_image AS cart_p_image,
+		    products.product_description AS cart_p_description,
 		    products.product_price AS cart_p_price,
 		    products.product_quantity AS cart_p_stock,
 		    customers_cart.qty AS cart_qty,
