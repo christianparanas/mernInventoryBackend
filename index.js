@@ -547,3 +547,55 @@ app.post("/searchitem", async (req, res) => {
 	);
 	
 })
+
+// place order
+app.post("/placeorder", (req, res) => {
+	const placeItems = req.body;
+
+	// insert the order details to order table
+	db.query(`INSERT INTO orders (customer_id, total, status, payment_mode, shipping_option) 
+						VALUES (?, ?, ?, ?, ?)`, [placeItems.user_id, placeItems.subtotal, "Pending", placeItems.paymentMethod, placeItems.shippingOp],
+
+			(err, result) => {
+				if(!err) {
+
+					// if there's no error on inserting on orders table, map thru cartItems to insert individual items to order_item table
+					// the order_item table with a foreign key of primary key of orders table order
+					placeItems.cartItems.map((val, key) => {
+						db.query(`INSERT INTO order_item (order_id, product_id, quantity)
+											VALUES (?, ?, ?)`, [result.insertId, val.productId, val.cart_qty],
+							(err, result) => {
+								if(err) {
+									res.status(202).json({
+										msg: "Error"
+									})
+									return;
+								}
+							}
+							)
+					}
+				)
+
+				// if success inserting the details, delete the items in the cart of the user
+				db.query("DELETE FROM customers_cart WHERE customer_id = ?", [placeItems.user_id], 
+					(err, result) => {
+						if(err) {
+							res.status(400);
+						}
+					}
+				)
+
+				// send a response to client to show to user
+				res.status(200).json({
+					date: placeItems.date,
+					order_id: result.insertId,
+					payment: placeItems.paymentMethod,
+					total: placeItems.subtotal
+				})
+
+				} else {
+					console.log(err)
+				}
+			}
+	)
+})
