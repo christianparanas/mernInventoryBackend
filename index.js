@@ -205,6 +205,32 @@ app.post("/updateproduct", async (req, res) => {
 	
 })
 
+// client products
+app.get("/products", async (req, res) => {
+
+	// select the product with a stock greater than zero
+	db.query("SELECT * FROM products WHERE product_quantity > 0 ORDER BY product_id DESC", 
+		(err, result) => {
+			// check if db has items
+			if(result.length > 0) {
+				res.status(200).json({
+					result
+				})
+			} else {
+				res.status(202).json({
+					message: "No Items in DB"
+				})
+			}
+
+			if(err) {
+				res.status(404).json({
+					message: "Server cannot be reached!"
+				})
+			}
+		}
+	);
+})
+
 
 // retrieve all products data to admin panel
 app.get("/adminproducts", async (req, res) => {
@@ -229,6 +255,30 @@ app.get("/adminproducts", async (req, res) => {
 			}
 		}
 	);
+})
+
+app.get("/adminorders", async (req, res) => {
+
+	db.query(`SELECT
+							orders.id AS orderId,
+							orders.status AS status,
+							customer.email AS userEmail
+						FROM
+							orders
+						INNER JOIN customer
+							ON orders.customer_id = customer.id
+						ORDER BY orders.created_at DESC;
+		`, (err, result) => {
+			if(!err) {
+				res.status(200).json({
+					result
+				})
+			} else {
+				console.log(err)
+			}
+		})
+
+
 })
 
 // overview dashboard
@@ -567,9 +617,21 @@ app.post("/placeorder", (req, res) => {
 							(err, result) => {
 								if(err) {
 									res.status(202).json({
-										msg: "Error"
+										msg: "Error while inserting cart items into order_item table"
 									})
 									return;
+
+								} else {
+									// subtract the user product order qty to product stock
+									db.query(`UPDATE products SET product_quantity = product_quantity - ${val.cart_qty} WHERE product_id = ${val.productId}`,
+										(err, result) => {
+											if(err) {
+												res.status(202).json({
+													msg: "Error while subtracting the product quantity"
+												})
+											}
+										}
+										)
 								}
 							}
 							)
