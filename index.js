@@ -401,7 +401,7 @@ app.get("/homefourproducts", async (req, res) => {
 		(err, resultone) => {
 			// check if db has items
 			if(resultone.length > 0) {
-				db.query("SELECT * FROM products", 
+				db.query("SELECT * FROM products WHERE product_quantity > 0", 
 					(err, resulttwo) => {
 						res.status(200).json({
 							resultfour: resultone,
@@ -576,7 +576,7 @@ app.post("/delcartitem", async (req, res) => {
 app.post("/searchitem", async (req, res) => {
 	const searchQuery = req.body;
 
-	db.query(`SELECT * FROM products WHERE product_name LIKE '%${req.body.query}%'`,
+	db.query(`SELECT * FROM products WHERE product_quantity > 0 AND product_name LIKE '%${req.body.query}%'`,
 		 (err, result) => {
 			if(!err) {
 				if(result.length > 0) {
