@@ -294,13 +294,24 @@ app.get("/adminoverview", async (req, res) => {
 					
 					 (err, customer_result) => {
 						if(!err) {
-							res.status(200).json({
-						 		productCount: product_result.length,
-						 		customerCount: customer_result.length
+							db.query("SELECT * FROM orders",
+								 (err, order_result) => {
+									if(!err) {
+										res.status(200).json({
+									 		productCount: product_result.length,
+									 		customerCount: customer_result.length,
+									 		orderCount: order_result.length
+									 	})
+									} else {
+										console.log(err)
+									}
 						 	})
+						} else {
+							console.log(err)
 						}
 			 	})
 			} else {
+				console.log(err)
 				res.status(400).json({
 					message: "Server cannot be reached!"
 				})
