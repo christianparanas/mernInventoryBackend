@@ -285,31 +285,20 @@ app.get("/adminorders", async (req, res) => {
 app.get("/adminoverview", async (req, res) => {
 
 	// get product count
-	db.query("SELECT * FROM products",
+	db.query(`SELECT * FROM products; 
+						SELECT * FROM customer; 
+						SELECT * FROM orders;
+						SELECT SUM(total) AS total FROM orders`,
 	
-		 (err, product_result) => {
+		 (err, result) => {
 			if(!err) {
-				// get customer count
-				db.query("SELECT * FROM customer",
-					
-					 (err, customer_result) => {
-						if(!err) {
-							db.query("SELECT * FROM orders",
-								 (err, order_result) => {
-									if(!err) {
-										res.status(200).json({
-									 		productCount: product_result.length,
-									 		customerCount: customer_result.length,
-									 		orderCount: order_result.length
-									 	})
-									} else {
-										console.log(err)
-									}
-						 	})
-						} else {
-							console.log(err)
-						}
-			 	})
+				// get  count
+				res.status(200).json({
+					customerCount: result[1].length,
+					productCount: result[0].length,
+					orderCount: result[2].length,
+					totalSales: result[3][0]
+				})
 			} else {
 				console.log(err)
 				res.status(400).json({
