@@ -661,3 +661,22 @@ app.post("/placeorder", (req, res) => {
 			}
 	)
 })
+
+
+// put userOrders history to their acct page
+app.post("/userorderhistory", (req, res) => {
+	console.log(req.body)
+	const userId = req.body.id
+
+	db.query(`SELECT * FROM orders
+						WHERE customer_id = ${userId}
+						ORDER BY created_at DESC`, 
+
+					(err, result) => {
+						if(!err) {
+							res.status(200).json({
+								result
+							})
+						}
+					})
+})
