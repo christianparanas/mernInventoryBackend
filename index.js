@@ -665,18 +665,36 @@ app.post("/placeorder", (req, res) => {
 
 // put userOrders history to their acct page
 app.post("/userorderhistory", (req, res) => {
-	console.log(req.body)
 	const userId = req.body.id
 
-	db.query(`SELECT * FROM orders
-						WHERE customer_id = ${userId}
-						ORDER BY created_at DESC`, 
+	db.query(`SELECT DISTINCT 
+							 orders.id,
+							 orders.status,
+							 orders.created_at,
+							 orders.total,
+							 orders.payment_mode,
+							 orders.shipping_option,
+
+							 GROUP_CONCAT(DISTINCT order_item.quantity) AS product_quantities,
+							 GROUP_CONCAT(DISTINCT products.product_image) AS product_images,
+							 GROUP_CONCAT(DISTINCT products.product_name) AS product_names
+	
+						FROM orders
+						INNER JOIN order_item
+							ON orders.id = order_item.order_id
+						INNER JOIN products
+							ON order_item.product_id = products.product_id
+						WHERE orders.customer_id = ${userId}
+						GROUP BY orders.id
+						ORDER BY orders.created_at DESC`, 
 
 					(err, result) => {
 						if(!err) {
 							res.status(200).json({
 								result
 							})
+						} else {
+							console.log(err)
 						}
 					})
 })
