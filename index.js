@@ -680,3 +680,24 @@ app.post("/userorderhistory", (req, res) => {
 						}
 					})
 })
+
+
+// update order status
+app.post("/updateorderstatus", (req, res) => {
+	console.log(req.body)
+
+	db.query(`UPDATE orders SET status = "Delivered"
+			WHERE id = ${req.body.id}
+		`, (err, result) => {
+			if(!err) {
+				res.status(200).json({
+					msg: "Success"
+				})
+			} else {
+				res.status(202).json({
+					msg: "Error"
+				})
+			}
+		})
+
+})
