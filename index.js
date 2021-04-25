@@ -25,26 +25,34 @@ app.use(express.urlencoded({ extended: true }))
 app.post("/register", async (req, res) => {
 	const creden = req.body;
 
-	db.query("SELECT * FROM customer WHERE email = ?", creden.email,
-		// check if email already used by other users
-		async (err, rows) => {
-			if(rows.length <= 0) {
-				// insert into the database
-				db.query("INSERT INTO customer (name, email, password, address) VALUES (?, ?, ?, ?)",
-					[creden.name, creden.email, creden.password, creden.address],
-					(err, result) => {
-						console.log(err)
-					}
-				);
-				res.send({ status: 200 })
+	bcrypt.hash(creden.password, 10, (err, hashedPass) => {
+		if(!err) {
+			db.query("SELECT * FROM customer WHERE email = ?", creden.email,
+				// check if email already used by other users
+				async (err, rows) => {
+					if(rows.length <= 0) {
+						// insert into the database
+						db.query("INSERT INTO customer (name, email, password, address) VALUES (?, ?, ?, ?)",
+							[creden.name, creden.email, hashedPass, creden.address],
+							(err, result) => {
+								console.log(err)
+							}
+						);
+						res.send({ status: 200 })
 
-			} else {
-				res.status(202).json({
-			 			message: "Email already exist!"
-			 		})
-			}
+					} else {
+						res.status(202).json({
+					 			message: "Email already exist!"
+					 		})
+					}
+				}
+			)
+		} else {
+			console.log(err)
 		}
-	)
+	})
+
+	
 	
 })
 
@@ -61,15 +69,17 @@ app.post("/login", async (req, res) => {
 		 async (err, rows) => {
 
 		 	if(rows.length > 0) {
-		 		if(password == rows[0].password) {
-		 			let userId = rows[0].id
+		 		bcrypt.compare(password, rows[0].password, (err, ress) => {
+		 			if(ress) {
 
-		 			// generate token
-		 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
-		 				expiresIn: "1h",
-		 			})
+			 			let userId = rows[0].id
 
-			 		res.status(200).json({
+			 			// generate token
+			 			const token = jwt.sign({ userId }, process.env.TOKEN_SECRET, {
+			 				expiresIn: "5h",
+			 			})
+
+				 		res.status(200).json({
 			 				auth: true,
 			 				token: token,
 			 				result: {
@@ -78,15 +88,16 @@ app.post("/login", async (req, res) => {
 				 				email: rows[0].email,
 				 				address: rows[0].address
 			 				}
-			 		})
-			 	} else {
-			 		res.status(202).json({
-			 			message: "Password is Incorrect!"
-			 		})
-			 	}
+				 		})
+		 			} else {
+				 		res.status(202).json({
+				 			message: "Password is Incorrect!"
+				 		})
+				 	}
+		 		})
 		 	} else {
 		 		res.status(204).json({
-			 		message: "User didn't exist!"
+			 		message: "Password is Incorrect!"
 			 	})
 		 	}
 		 }
@@ -668,16 +679,16 @@ app.post("/userorderhistory", (req, res) => {
 	const userId = req.body.id
 
 	db.query(`SELECT DISTINCT 
-							 orders.id,
-							 orders.status,
-							 orders.created_at,
-							 orders.total,
-							 orders.payment_mode,
-							 orders.shipping_option,
+						 orders.id,
+						 orders.status,
+						 orders.created_at,
+						 orders.total,
+						 orders.payment_mode,
+						 orders.shipping_option,
 
-							 GROUP_CONCAT(DISTINCT order_item.quantity) AS product_quantities,
-							 GROUP_CONCAT(DISTINCT products.product_image) AS product_images,
-							 GROUP_CONCAT(DISTINCT products.product_name) AS product_names
+						 GROUP_CONCAT(DISTINCT order_item.quantity) AS product_quantities,
+						 GROUP_CONCAT(DISTINCT products.product_image) AS product_images,
+						 GROUP_CONCAT(DISTINCT products.product_name) AS product_names
 	
 						FROM orders
 						INNER JOIN order_item
