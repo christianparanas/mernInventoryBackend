@@ -686,9 +686,9 @@ app.post("/userorderhistory", (req, res) => {
 						 orders.payment_mode,
 						 orders.shipping_option,
 
-						 GROUP_CONCAT(DISTINCT order_item.quantity) AS product_quantities,
-						 GROUP_CONCAT(DISTINCT products.product_image) AS product_images,
-						 GROUP_CONCAT(DISTINCT products.product_name) AS product_names
+						 GROUP_CONCAT(order_item.quantity) AS product_quantities,
+						 GROUP_CONCAT(products.product_image) AS product_images,
+						 GROUP_CONCAT(products.product_name) AS product_names
 	
 						FROM orders
 						INNER JOIN order_item
