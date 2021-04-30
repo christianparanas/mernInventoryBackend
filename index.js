@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
-// init
+// init .
 const app = express()
 dotenv.config()
 
