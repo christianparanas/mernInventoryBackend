@@ -677,6 +677,7 @@ app.post("/placeorder", (req, res) => {
 // put userOrders history to their acct page
 app.post("/userorderhistory", (req, res) => {
 	const userId = req.body.id
+	console.log(userId)
 
 	db.query(`SELECT DISTINCT 
 						 orders.id,
@@ -685,10 +686,6 @@ app.post("/userorderhistory", (req, res) => {
 						 orders.total,
 						 orders.payment_mode,
 						 orders.shipping_option,
-						 customer.id AS customerId,
-						 customer.name, 
-						 customer.email,
-						 customer.address,
 
 						 GROUP_CONCAT(order_item.quantity) AS product_quantities,
 						 GROUP_CONCAT(products.product_image) AS product_images,
@@ -699,9 +696,7 @@ app.post("/userorderhistory", (req, res) => {
 							ON orders.id = order_item.order_id
 						INNER JOIN products
 							ON order_item.product_id = products.product_id
-						LEFT JOIN customer
-							ON orders.customer_id = customer.id
-						WHERE customer.id = ${userId}
+						WHERE orders.customer_id = ${userId}
 						GROUP BY orders.id
 						ORDER BY orders.created_at DESC`, 
 
@@ -716,8 +711,26 @@ app.post("/userorderhistory", (req, res) => {
 					})
 })
 
+// load user info
+app.post("/loaduserinfo", (req, res) => {
+	const userId = req.body.id
+
+	db.query(`SELECT * FROM customer WHERE id = ${userId}`, (err, result) => {
+		if(!err) {
+				res.status(200).json({
+					result
+				})
+		} else {
+			res.status(202).json({
+				msg: "Error"
+			})
+		}
+	})
+})
+
 
 app.post("/updateuserinfo", (req, res) => {
+	console.log(req.body)
 	const { id, name, email, address } = req.body
 
 	db.query(`UPDATE customer SET name = ?, email = ?, address = ? WHERE id = ?`, [name, email, address, id], (err, result) => {
