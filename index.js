@@ -408,7 +408,7 @@ app.post("/specificproduct", async (req, res) => {
 // get home 4 products
 app.get("/homefourproducts", async (req, res) => {
 	
-	db.query("SELECT * FROM products WHERE product_quantity > 0 ORDER BY product_id DESC LIMIT 4", 
+	db.query("SELECT * FROM products WHERE product_quantity > 0 ORDER BY product_id DESC LIMIT 5", 
 		(err, resultone) => {
 			// check if db has items
 			if(resultone.length > 0) {
