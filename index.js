@@ -701,7 +701,7 @@ app.post("/userorderhistory", (req, res) => {
 							ON order_item.product_id = products.product_id
 						LEFT JOIN customer
 							ON orders.customer_id = customer.id
-						WHERE orders.customer_id = ${userId}
+						WHERE customer.id = ${userId}
 						GROUP BY orders.id
 						ORDER BY orders.created_at DESC`, 
 
