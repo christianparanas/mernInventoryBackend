@@ -176,15 +176,19 @@ app.post("/newproduct", async (req, res) => {
 })
 
 app.post("/delproduct", async (req, res) => {
-	const product = req.body;
+	const { id }  = req.body;
 
-	db.query("DELETE FROM products WHERE product_id = ?", product.id,
-		
+	db.query("DELETE FROM products WHERE product_id = ?", id,
 		 (err, result) => {
+
 			if(!err) {
 				res.status(200).json({
 			 		message: "Item successfully deleted!"
 			 	})
+			} else if(err.errno == 1451) {
+				res.status(202).json({
+					message: "This Product cannot be deleted because it is used in the other database tables"
+				})
 			} else {
 				res.status(400).json({
 					message: "Server cannot be reached!"
