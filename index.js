@@ -35,4 +35,3 @@ app.use("/user", userRouter)
 app.use("/admin", adminProductsRouter)
 app.use("/admin", adminCustomersRouter)
 app.use("/admin", adminOrdersRouter)
-
