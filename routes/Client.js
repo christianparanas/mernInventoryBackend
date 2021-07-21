@@ -65,13 +65,15 @@ router.post("/products/:id", async (req, res) => {
 router.get("/homeproducts", (req, res) => {
 	db.query("SELECT * FROM products WHERE product_quantity > 0 ORDER BY product_id DESC LIMIT 5", 
 		(err, resultone) => {
-			if(resultone.length > 0) {
-				db.query("SELECT * FROM products WHERE product_quantity > 0", 
-					(err, resulttwo) => {
-						res.status(200).json({ resultfour: resultone, resultlength: resulttwo.length })
-					})
-			} else {
-				res.status(202).json({ message: "No Product" })
+			if(resultone) {
+				if(resultone.length > 0) {
+					db.query("SELECT * FROM products WHERE product_quantity > 0", 
+						(err, resulttwo) => {
+							res.status(200).json({ resultfour: resultone, resultlength: resulttwo.length })
+						})
+				} else {
+					res.status(202).json({ message: "No Product" })
+				}
 			}
 
 			if(err) {

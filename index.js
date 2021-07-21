@@ -11,12 +11,13 @@ const port = 3001;
 const app = express()
 dotenv.config()
 
-app.listen(process.env.PORT || port, () => { console.log(`Running on port: ${port}`) })
 
 // needed to fix some errors
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+app.listen(process.env.PORT || port, () => { console.log(`Running on port: ${port}`) })
 
 // routers
 const authRouter = require('./routes/Auth')
